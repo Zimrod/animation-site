@@ -18,9 +18,9 @@ const presetAllowance = {
 const extraPresetCost = 49;
 
 const basePrices = {
-  '30-60': { single: 199, weekly: 599 },
-  '61-90': { single: 299, weekly: 899 },
-  '91-120': { single: 399, weekly: 1199 },
+  '30-60': { single: 300, weekly: 750 },
+  '61-90': { single: 450, weekly: 1100 },
+  '91-120': { single: 600, weekly: 1500 },
   custom: { single: 'Quote', weekly: 'Quote' },
 };
 
@@ -170,7 +170,7 @@ export default function Home() {
 
                 <div className="flex flex-col gap-2 mb-8">
                    <button onClick={() => setBillingType('single')} className={`py-3 text-[10px] font-bold uppercase border ${billingType === 'single' ? 'bg-white text-black' : 'border-zinc-800 text-zinc-500'}`}>Single Job</button>
-                   <button onClick={() => setBillingType('weekly')} className={`py-3 text-[10px] font-bold uppercase border ${billingType === 'weekly' ? 'bg-white text-black' : 'border-zinc-800 text-zinc-500'}`}>Weekly Routine</button>
+                   <button onClick={() => setBillingType('weekly')} className={`py-3 text-[10px] font-bold uppercase border ${billingType === 'weekly' ? 'bg-white text-black' : 'border-zinc-800 text-zinc-500'}`}>3-Videos/Week</button>
                 </div>
 
                 <a href={`#contact?message=${encodeURIComponent(messageBody)}`} className="block w-full bg-white text-black text-center py-5 font-black uppercase text-xs tracking-widest hover:invert transition-all">
@@ -187,11 +187,11 @@ export default function Home() {
         <div className="max-w-xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-black uppercase tracking-tighter mb-4 text-white">Ready to start?</h2>
-            <p className="text-zinc-300">Drop us a line about your project. We usually reply within a few hours.</p>
+            <p className="text-zinc-300 text-sm">Drop us a line about your project. We usually reply within a few hours.</p>
           </div>
           <form className="space-y-4">
-            <input type="email" placeholder="Your email" className="w-full bg-zinc-950 border border-zinc-800 p-4 font-mono text-sm text-white focus:border-white outline-none" />
-            <textarea rows={5} placeholder="Tell me about your project style and goals..." className="w-full bg-zinc-950 border border-zinc-800 p-4 font-mono text-sm text-white focus:border-white outline-none"></textarea>
+            <input type="email" placeholder="Your email" className="w-full bg-zinc-950 border border-zinc-800 p-4 font-mono text-xs text-white focus:border-white outline-none" />
+            <textarea rows={5} placeholder="Tell me about your project style and goals..." className="w-full bg-zinc-950 border border-zinc-800 p-4 font-mono text-xs text-white focus:border-white outline-none"></textarea>
             <button className="w-full bg-white text-black py-4 font-bold uppercase text-xs tracking-widest hover:bg-zinc-200 transition-all">
               Send Message
             </button>
