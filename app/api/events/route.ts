@@ -1,7 +1,8 @@
+export const dynamic = 'force-dynamic';
+
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
 // We move the initialization inside the function to avoid build-time errors
 export async function POST(request: Request) {
   // Check for the key inside the handler
