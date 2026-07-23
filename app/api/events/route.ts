@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       }
 
       await resend.emails.send({
-        from: 'onboarding@resend.dev', 
+        from: 'admin@journey18miles.com', 
         to: 'tumaikr@gmail.com',
         subject: `Fwd: ${data.subject}`,
         html: `<p><strong>From:</strong> ${data.from}</p><hr />${data.html}`,
