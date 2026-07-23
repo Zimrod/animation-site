@@ -4,7 +4,7 @@ import { Preset } from '@/data/presets';
 export default function PresetVideoCard({ preset }: { preset: Preset }) {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
 
-  const videoSources = (preset as any).videoUrls || [preset.videoUrl];
+  const videoSources = (preset as any).videoUrls || [(preset as any).videoUrl];
 
   const handleVideoEnd = () => {
     if (videoSources.length > 1) {
