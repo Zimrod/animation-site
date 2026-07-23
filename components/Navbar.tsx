@@ -6,6 +6,8 @@ import { Menu, X, User } from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { AuthModal } from './AuthModal';
 
+const STUDIO_URL = process.env.NEXT_PUBLIC_STUDIO_URL || "https://procedural-max-studio.onrender.com/";
+
 export default function Navbar() {
   const { user, logout } = useAuth();
   console.log('Who is it: ', user);
@@ -130,7 +132,7 @@ export default function Navbar() {
 
               <div className="border-t border-zinc-800 pt-6 space-y-4">
                 <a
-                  href="https://procedural-max-studio.onrender.com/"
+                  href={STUDIO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setIsOpen(false)}

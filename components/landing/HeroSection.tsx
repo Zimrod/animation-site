@@ -2,6 +2,8 @@
 import Link from "next/link";
 import HeroVideo from "@/components/landing/HeroVideo";
 
+const STUDIO_URL = process.env.NEXT_PUBLIC_STUDIO_URL || "https://procedural-max-studio.onrender.com/";
+
 export default function HeroSection() {
   return (
     <section className="pt-40 pb-32 px-6 max-w-7xl mx-auto"> 
@@ -32,7 +34,7 @@ export default function HeroSection() {
 
           <div className="flex flex-wrap gap-4 mt-10">
             <Link
-              href="https://procedural-max-studio.onrender.com/"
+              href={STUDIO_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-black text-white px-8 py-4 font-bold inline-block"
