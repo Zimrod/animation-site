@@ -88,8 +88,12 @@ export default function Navbar() {
                     <p className="text-xs text-gray-500">{user.email}</p>
                   </div>
                   <div className="px-4 py-2 border-b border-zinc-100 bg-zinc-50">
-                    <p className="text-sm font-medium">Credits available:</p>
+                    <p className="text-sm font-medium">Render Credits available:</p>
                     <p className="text-xs text-gray-500 font-bold">{user?.credits ?? 0}</p>
+                  </div>
+                  <div className="px-4 py-2 border-b border-zinc-100 bg-zinc-50">
+                    <p className="text-sm font-medium">AI Tokens available:</p>
+                    <p className="text-xs text-gray-500 font-bold">{user?.ai_tokens ?? 0}</p>
                   </div>
                   <button
                     onClick={() => {

@@ -8,6 +8,7 @@ type User = {
   email: string;
   name?: string;
   credits: number;
+  tokens: number; // 👈 Added AI tokens field
 };
 
 type AuthContextType = {
@@ -59,7 +60,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         setUser({
           ...authData.user,
-          credits: creditsData?.credits || 0,
+          credits: creditsData?.credits ?? 0,
+          tokens: creditsData?.tokens ?? authData.user?.ai_tokens ?? 0, // 👈 Captures AI tokens from backend
         });
       } catch (error) {
         localStorage.removeItem('authToken');
@@ -81,7 +83,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Login failed');
     localStorage.setItem('authToken', data.token);
-    setUser(data.user);
+    
+    setUser({
+      ...data.user,
+      tokens: data.user?.ai_tokens ?? data.user?.tokens ?? 0,
+    });
   };
 
   const register = async (email: string, password: string, name?: string) => {
@@ -93,7 +99,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Registration failed');
     localStorage.setItem('authToken', data.token);
-    setUser(data.user);
+
+    setUser({
+      ...data.user,
+      tokens: data.user?.ai_tokens ?? data.user?.tokens ?? 50, // Default to 50 initial AI tokens
+    });
   };
 
   const logout = () => {
