@@ -8,7 +8,7 @@ type User = {
   email: string;
   name?: string;
   credits: number;
-  tokens: number; // 👈 Added AI tokens field
+  ai_tokens: number;
 };
 
 type AuthContextType = {
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser({
           ...authData.user,
           credits: creditsData?.credits ?? 0,
-          tokens: creditsData?.tokens ?? authData.user?.ai_tokens ?? 0, // 👈 Captures AI tokens from backend
+          ai_tokens: creditsData?.ai_tokens ?? creditsData?.tokens ?? authData.user?.ai_tokens ?? 0,
         });
       } catch (error) {
         localStorage.removeItem('authToken');
@@ -83,10 +83,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Login failed');
     localStorage.setItem('authToken', data.token);
-    
+
     setUser({
       ...data.user,
-      tokens: data.user?.ai_tokens ?? data.user?.tokens ?? 0,
+      credits: data.user?.credits ?? 0,
+      ai_tokens: data.user?.ai_tokens ?? data.user?.tokens ?? 0,
     });
   };
 
@@ -102,7 +103,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     setUser({
       ...data.user,
-      tokens: data.user?.ai_tokens ?? data.user?.tokens ?? 50, // Default to 50 initial AI tokens
+      credits: data.user?.credits ?? 0,
+      ai_tokens: data.user?.ai_tokens ?? data.user?.tokens ?? 50,
     });
   };
 
