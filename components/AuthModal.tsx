@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useAuth } from './AuthContext';
 import { useSearchParams } from 'next/navigation';
 
 type AuthModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onOpen?: () => void; // Optional callback to notify parent layout to open modal
+  onOpen?: () => void;
 };
 
-export const AuthModal = ({ isOpen, onClose, onOpen }: AuthModalProps) => {
+// 1. Inner component where useSearchParams is executed
+const AuthModalContent = ({ isOpen, onClose, onOpen }: AuthModalProps) => {
   const { login } = useAuth();
   const [view, setView] = useState<'login' | 'register' | 'forgot-password'>('login');
   
@@ -29,7 +30,7 @@ export const AuthModal = ({ isOpen, onClose, onOpen }: AuthModalProps) => {
 
   const searchParams = useSearchParams();
 
-  // 1. Trigger Modal Open from Query Params (e.g. ?auth=login or ?auth=register)
+  // Trigger Modal Open from Query Params (e.g. ?auth=login or ?auth=register)
   useEffect(() => {
     const authAction = searchParams.get('auth');
     if (authAction === 'login' || authAction === 'register') {
@@ -39,7 +40,7 @@ export const AuthModal = ({ isOpen, onClose, onOpen }: AuthModalProps) => {
     }
   }, [searchParams, onOpen]);
 
-  // 2. Sweeps states clean on visibility toggle
+  // Sweeps states clean on visibility toggle
   useEffect(() => {
     setEmail('');
     setPassword('');
@@ -58,7 +59,7 @@ export const AuthModal = ({ isOpen, onClose, onOpen }: AuthModalProps) => {
     onClose();
     const redirectUrl = searchParams.get('redirect');
     if (redirectUrl) {
-      window.location.href = redirectUrl; // Redirect user back to caller (e.g., Studio)
+      window.location.href = redirectUrl;
     }
   };
 
@@ -259,5 +260,14 @@ export const AuthModal = ({ isOpen, onClose, onOpen }: AuthModalProps) => {
         )}
       </div>
     </div>
+  );
+};
+
+// 2. Export wrapped in Suspense so Next.js static prerendering succeeds
+export const AuthModal = (props: AuthModalProps) => {
+  return (
+    <Suspense fallback={null}>
+      <AuthModalContent {...props} />
+    </Suspense>
   );
 };
