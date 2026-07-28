@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     const { data: user, error } = await supabase
       .from('users')
-      .select('credits')
+      .select('credits, ai_tokens') // 👈 Added ai_tokens here
       .eq('id', decoded.userId)
       .maybeSingle();
 
@@ -28,7 +28,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ credits: user.credits });
+    return NextResponse.json({ 
+      credits: user.credits ?? 0,
+      ai_tokens: user.ai_tokens ?? 50 // 👈 Return ai_tokens in payload
+    });
   } catch (error) {
     console.error('Credits error:', error);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
