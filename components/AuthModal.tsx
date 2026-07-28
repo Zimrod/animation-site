@@ -1,15 +1,16 @@
-// components/AuthModal.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { useSearchParams } from 'next/navigation';
 
 type AuthModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  onOpen?: () => void; // Optional callback to notify parent layout to open modal
 };
 
-export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
+export const AuthModal = ({ isOpen, onClose, onOpen }: AuthModalProps) => {
   const { login } = useAuth();
   const [view, setView] = useState<'login' | 'register' | 'forgot-password'>('login');
   
@@ -26,7 +27,19 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 🧹 Sweeps states completely clean on visibility toggle (Fixes Edge/Chromium cached autofill traps)
+  const searchParams = useSearchParams();
+
+  // 1. Trigger Modal Open from Query Params (e.g. ?auth=login or ?auth=register)
+  useEffect(() => {
+    const authAction = searchParams.get('auth');
+    if (authAction === 'login' || authAction === 'register') {
+      if (authAction === 'register') setView('register');
+      if (authAction === 'login') setView('login');
+      if (onOpen) onOpen();
+    }
+  }, [searchParams, onOpen]);
+
+  // 2. Sweeps states clean on visibility toggle
   useEffect(() => {
     setEmail('');
     setPassword('');
@@ -40,6 +53,15 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   if (!isOpen) return null;
 
+  // Helper to process redirect handoff
+  const handleSuccessRedirect = () => {
+    onClose();
+    const redirectUrl = searchParams.get('redirect');
+    if (redirectUrl) {
+      window.location.href = redirectUrl; // Redirect user back to caller (e.g., Studio)
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -48,7 +70,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     try {
       if (view === 'login') {
         await login(email, password);
-        onClose();
+        handleSuccessRedirect();
       } else if (view === 'register') {
         const res = await fetch('/api/auth/register', {
           method: 'POST',
@@ -64,7 +86,6 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           setShowVerifyAlert(true);
         }
       } else if (view === 'forgot-password') {
-        // 🔑 Forgot Password Request Dispatch Pipeline
         const res = await fetch('/api/auth/forgot-password', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -74,7 +95,6 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Something went wrong.');
 
-        // On successful API response, display the validation feedback card
         setAlertMessage(data.message || 'Check your email for a reset link.');
         setShowResetAlert(true);
       }
@@ -108,7 +128,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               {alertMessage}
             </p>
             <button
-              onClick={onClose}
+              onClick={handleSuccessRedirect}
               className="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition"
             >
               Close Window
