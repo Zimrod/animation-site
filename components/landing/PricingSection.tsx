@@ -1,6 +1,31 @@
 // components/landing/PricingSection.tsx
 import SectionHeader from "@/components/landing/SectionHeader";
 
+const PAYNOW_INTEGRATION_ID = "25729"; // Your Integration ID from Paynow
+
+/**
+ * Generates a Paynow Advanced Payment Link
+ */
+function createPaynowLink(amount: number, packageName: string, locked = true): string {
+  // 1. Build key-value arguments
+  const params = new URLSearchParams({
+    id: PAYNOW_INTEGRATION_ID,
+    amount: amount.toFixed(2),
+    f1: packageName, // Optional custom field passed to Paynow template
+    l: locked ? "1" : "0",
+  });
+
+  // 2. Base64 encode the query string
+  const base64Encoded = typeof window !== "undefined"
+    ? btoa(params.toString())
+    : Buffer.from(params.toString()).toString("base64");
+
+  // 3. URL encode the result
+  const urlEncoded = encodeURIComponent(base64Encoded);
+
+  return `https://www.paynow.co.zw/payment/billpaymentlink?q=${urlEncoded}`;
+}
+
 const packages = [
   {
     name: "Single",
@@ -83,7 +108,6 @@ export default function PricingSection() {
   return (
     <section className="py-32 px-6" id="pricing">
       <div className="max-w-7xl mx-auto">
-
         <SectionHeader
           eyebrow="Pricing"
           title="Early Access Pricing"
@@ -102,7 +126,6 @@ export default function PricingSection() {
 
         {/* ── Standard pricing cards ── */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
-
           {packages.map((pkg) => (
             <div
               key={pkg.name}
@@ -132,7 +155,9 @@ export default function PricingSection() {
                 )}
 
                 <a 
-                  href='https://www.paynow.co.zw/Payment/BillPaymentLink/?q=aWQ9MjU2OTUmYW1vdW50PTQ5LjAwJmFtb3VudF9xdWFudGl0eT0wLjAwJmw9MA%3d%3d' target='_blank'
+                  href={createPaynowLink(pkg.price, `${pkg.name} Video Package`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="block w-full mt-6 bg-black text-white text-center px-6 py-3 font-medium hover:bg-gray-800 transition"
                 >
                   Buy {pkg.name}
@@ -140,7 +165,6 @@ export default function PricingSection() {
               </div>
             </div>
           ))}
-
         </div>
 
         {/* ── Custom Widgets Section ── */}
@@ -159,7 +183,6 @@ export default function PricingSection() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-
             {customWidgetTiers.map((tier) => (
               <div
                 key={tier.name}
@@ -204,7 +227,13 @@ export default function PricingSection() {
                   </ul>
 
                   <a
-                    href="#contact"
+                    href={
+                      typeof tier.price === "number"
+                        ? createPaynowLink(tier.price, `${tier.name} Custom Tier`)
+                        : "#contact"
+                    }
+                    target={typeof tier.price === "number" ? "_blank" : "_self"}
+                    rel="noopener noreferrer"
                     className={`block w-full mt-6 text-center px-6 py-3 font-medium transition ${
                       tier.popular
                         ? 'bg-white text-black hover:bg-zinc-200'
@@ -216,14 +245,12 @@ export default function PricingSection() {
                 </div>
               </div>
             ))}
-
           </div>
 
           <p className="text-sm text-zinc-400 text-center mt-8">
             Custom widgets are built once and yours forever. Updates and maintenance included for 1 year.
           </p>
         </div>
-
       </div>
     </section>
   );
